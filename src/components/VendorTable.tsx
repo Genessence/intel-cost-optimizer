@@ -10,7 +10,8 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ChevronLeft, ChevronRight, ArrowLeftRight } from "lucide-react";
 
 const mockVendors = [
   {
@@ -67,6 +68,7 @@ interface VendorTableProps {
 export const VendorTable = ({ searchQuery }: VendorTableProps) => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedVendors, setSelectedVendors] = useState<string[]>([]);
   const itemsPerPage = 10;
 
   const filteredVendors = mockVendors.filter((vendor) =>
@@ -92,11 +94,57 @@ export const VendorTable = ({ searchQuery }: VendorTableProps) => {
     }
   };
 
+  const toggleVendorSelection = (vendorId: string) => {
+    setSelectedVendors(prev =>
+      prev.includes(vendorId)
+        ? prev.filter(id => id !== vendorId)
+        : [...prev, vendorId]
+    );
+  };
+
+  const toggleAll = () => {
+    if (selectedVendors.length === displayedVendors.length) {
+      setSelectedVendors([]);
+    } else {
+      setSelectedVendors(displayedVendors.map(v => v.id));
+    }
+  };
+
+  const handleCompare = () => {
+    navigate(`/compare?vendors=${selectedVendors.join(',')}`);
+  };
+
   return (
     <div className="space-y-4">
+      {selectedVendors.length > 0 && (
+        <div className="flex items-center justify-between p-4 bg-primary/5 border border-primary/20 rounded-lg">
+          <p className="text-sm font-medium">
+            {selectedVendors.length} vendor{selectedVendors.length > 1 ? 's' : ''} selected
+          </p>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={() => setSelectedVendors([])}>
+              Clear Selection
+            </Button>
+            <Button 
+              size="sm" 
+              onClick={handleCompare}
+              disabled={selectedVendors.length < 2}
+            >
+              <ArrowLeftRight className="h-4 w-4 mr-2" />
+              Compare Vendors
+            </Button>
+          </div>
+        </div>
+      )}
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead className="w-12">
+              <Checkbox
+                checked={selectedVendors.length === displayedVendors.length && displayedVendors.length > 0}
+                onCheckedChange={toggleAll}
+              />
+            </TableHead>
             <TableHead>Vendor ID</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Location</TableHead>
@@ -108,20 +156,50 @@ export const VendorTable = ({ searchQuery }: VendorTableProps) => {
         </TableHeader>
         <TableBody>
           {displayedVendors.map((vendor) => (
-            <TableRow
-              key={vendor.id}
-              className="cursor-pointer hover:bg-muted/50"
-              onClick={() => navigate(`/vendors/${vendor.id}`)}
-            >
-              <TableCell className="font-mono text-sm">{vendor.id}</TableCell>
-              <TableCell className="font-medium">{vendor.name}</TableCell>
-              <TableCell className="text-muted-foreground">{vendor.location}</TableCell>
-              <TableCell className="text-right">{vendor.totalItems}</TableCell>
-              <TableCell>{new Date(vendor.lastNegotiation).toLocaleDateString()}</TableCell>
-              <TableCell className="text-right font-medium">
+            <TableRow key={vendor.id} className="hover:bg-muted/50">
+              <TableCell onClick={(e) => e.stopPropagation()}>
+                <Checkbox
+                  checked={selectedVendors.includes(vendor.id)}
+                  onCheckedChange={() => toggleVendorSelection(vendor.id)}
+                />
+              </TableCell>
+              <TableCell 
+                className="font-mono text-sm cursor-pointer"
+                onClick={() => navigate(`/vendors/${vendor.id}`)}
+              >
+                {vendor.id}
+              </TableCell>
+              <TableCell 
+                className="font-medium cursor-pointer"
+                onClick={() => navigate(`/vendors/${vendor.id}`)}
+              >
+                {vendor.name}
+              </TableCell>
+              <TableCell 
+                className="text-muted-foreground cursor-pointer"
+                onClick={() => navigate(`/vendors/${vendor.id}`)}
+              >
+                {vendor.location}
+              </TableCell>
+              <TableCell 
+                className="text-right cursor-pointer"
+                onClick={() => navigate(`/vendors/${vendor.id}`)}
+              >
+                {vendor.totalItems}
+              </TableCell>
+              <TableCell 
+                className="cursor-pointer"
+                onClick={() => navigate(`/vendors/${vendor.id}`)}
+              >
+                {new Date(vendor.lastNegotiation).toLocaleDateString()}
+              </TableCell>
+              <TableCell 
+                className="text-right font-medium cursor-pointer"
+                onClick={() => navigate(`/vendors/${vendor.id}`)}
+              >
                 ${vendor.annualSpend.toLocaleString()}
               </TableCell>
-              <TableCell>
+              <TableCell onClick={() => navigate(`/vendors/${vendor.id}`)} className="cursor-pointer">
                 <Badge variant={getStatusVariant(vendor.status)}>
                   {vendor.status}
                 </Badge>
