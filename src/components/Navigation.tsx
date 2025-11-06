@@ -9,8 +9,8 @@ const navItems = [
     icon: LayoutDashboard,
   },
   {
-    title: "Vendors",
-    href: "/vendors",
+    title: "Costing",
+    href: "/costing",
     icon: Users,
   },
   {

@@ -63,9 +63,10 @@ const mockVendors = [
 
 interface VendorTableProps {
   searchQuery: string;
+  commodityId?: string;
 }
 
-export const VendorTable = ({ searchQuery }: VendorTableProps) => {
+export const VendorTable = ({ searchQuery, commodityId }: VendorTableProps) => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedVendors, setSelectedVendors] = useState<string[]>([]);
