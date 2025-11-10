@@ -162,7 +162,7 @@ const VendorComparison = () => {
             </div>
             <h1 className="text-4xl font-bold tracking-tight">Vendor Comparison</h1>
             <p className="text-muted-foreground">
-              Comparing {vendors.length} vendor{vendors.length > 1 ? "s" : ""} across procurement items
+              Comparing {vendors.length} vendor{vendors.length > 1 ? "s" : ""} across items
             </p>
           </div>
         </div>
@@ -214,7 +214,7 @@ const VendorComparison = () => {
         <Card>
           <CardHeader>
             <CardTitle>Item-by-Item Comparison</CardTitle>
-            <CardDescription>Detailed cost breakdown for common procurement items</CardDescription>
+            <CardDescription>Detailed cost breakdown for common items</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-6">

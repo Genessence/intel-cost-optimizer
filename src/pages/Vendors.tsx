@@ -35,7 +35,7 @@ const Vendors = () => {
           <p className="text-muted-foreground">
             {commodityId 
               ? `Vendors supplying ${commodityName.toLowerCase()} products` 
-              : "Manage and analyze vendor relationships and procurement costs"}
+              : "Manage and analyze vendor relationships and costs"}
           </p>
         </div>
 

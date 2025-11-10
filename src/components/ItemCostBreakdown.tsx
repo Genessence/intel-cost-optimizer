@@ -236,7 +236,7 @@ export const ItemCostBreakdown = ({ partCode }: ItemCostBreakdownProps) => {
                 <div className="flex items-center gap-2 p-4 border rounded-lg bg-warning/5 border-warning/20">
                   <AlertTriangle className="h-5 w-5 text-warning" />
                   <p className="text-sm">
-                    Changes to non-qualifiable costs require approval from procurement manager
+                    Changes to non-qualifiable costs require approval from cost manager
                   </p>
                 </div>
                 <div className="grid gap-4">

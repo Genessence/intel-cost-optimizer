@@ -15,7 +15,7 @@ export const CostChart = () => {
     <Card className="h-full">
       <CardHeader>
         <CardTitle>Cost Breakdown Trends</CardTitle>
-        <CardDescription>6-month overview of procurement costs by category</CardDescription>
+        <CardDescription>6-month overview of costs by category</CardDescription>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={350}>

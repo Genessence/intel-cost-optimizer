@@ -1,24 +1,25 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { TrendingUp, TrendingDown, Users, Package, Factory, Layers } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { TrendingUp, TrendingDown, Users, Package, Factory, Layers, Activity, Link2 } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
+import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
 type TimePeriod = "monthly" | "quarterly" | "yearly";
 
 const getStatsForPeriod = (period: TimePeriod) => {
   const periodData = {
     monthly: {
-      vendors: { total: "342", change: "+12.5%" },
-      items: { total: "1,247", change: "+8.2%" },
+      vendors: { total: "342", change: "+12.5%", assessments: "127" },
+      items: { total: "1,247", change: "+8.2%", assessments: "456" },
     },
     quarterly: {
-      vendors: { total: "342", change: "+28.3%" },
-      items: { total: "1,247", change: "+15.7%" },
+      vendors: { total: "342", change: "+28.3%", assessments: "318" },
+      items: { total: "1,247", change: "+15.7%", assessments: "1,089" },
     },
     yearly: {
-      vendors: { total: "342", change: "+45.2%" },
-      items: { total: "1,247", change: "+32.1%" },
+      vendors: { total: "342", change: "+45.2%", assessments: "1,245" },
+      items: { total: "1,247", change: "+32.1%", assessments: "4,328" },
     },
   };
   return periodData[period];
@@ -29,6 +30,57 @@ const commodityTrends = [
   { name: "Al (Aluminum)", price: "$2,156/MT", change: "-1.2%", trend: "down", index: "LME" },
   { name: "Zn (Zinc)", price: "$2,489/MT", change: "+3.7%", trend: "up", index: "LME" },
   { name: "Steel", price: "$675/MT", change: "+0.8%", trend: "up", index: "SBB" },
+  { name: "Ni (Nickel)", price: "$18,456/MT", change: "+1.5%", trend: "up", index: "LME" },
+  { name: "Pb (Lead)", price: "$2,087/MT", change: "-0.4%", trend: "down", index: "LME" },
+];
+
+// Dummy data for commodity trend charts (last 30 days)
+const copperTrendData = [
+  { day: "D1", price: 8050 },
+  { day: "D5", price: 8120 },
+  { day: "D10", price: 8090 },
+  { day: "D15", price: 8180 },
+  { day: "D20", price: 8150 },
+  { day: "D25", price: 8200 },
+  { day: "D30", price: 8234 },
+];
+
+const aluminumTrendData = [
+  { day: "D1", price: 2180 },
+  { day: "D5", price: 2165 },
+  { day: "D10", price: 2190 },
+  { day: "D15", price: 2175 },
+  { day: "D20", price: 2160 },
+  { day: "D25", price: 2170 },
+  { day: "D30", price: 2156 },
+];
+
+const zincTrendData = [
+  { day: "D1", price: 2400 },
+  { day: "D5", price: 2420 },
+  { day: "D10", price: 2410 },
+  { day: "D15", price: 2450 },
+  { day: "D20", price: 2460 },
+  { day: "D25", price: 2475 },
+  { day: "D30", price: 2489 },
+];
+
+const steelTrendData = [
+  { day: "D1", price: 670 },
+  { day: "D5", price: 668 },
+  { day: "D10", price: 672 },
+  { day: "D15", price: 671 },
+  { day: "D20", price: 673 },
+  { day: "D25", price: 674 },
+  { day: "D30", price: 675 },
+];
+
+// Linked indices information
+const linkedIndices = [
+  { name: "LME (London Metal Exchange)", commodities: ["Copper", "Aluminum", "Zinc", "Nickel", "Lead"], status: "active" },
+  { name: "SBB (Steel Benchmarker)", commodities: ["Hot-rolled coil", "Cold-rolled coil"], status: "active" },
+  { name: "COMEX (Commodity Exchange)", commodities: ["Gold", "Silver"], status: "active" },
+  { name: "MCX (Multi Commodity Exchange)", commodities: ["Copper", "Zinc", "Aluminum"], status: "active" },
 ];
 
 export const DashboardStats = () => {
@@ -66,6 +118,12 @@ export const DashboardStats = () => {
             <div className="space-y-1">
               <p className="text-sm font-medium text-muted-foreground">Total Vendors</p>
               <p className="text-3xl font-bold tracking-tight">{stats.vendors.total}</p>
+              <div className="flex items-center gap-2 mt-2">
+                <Activity className="h-4 w-4 text-muted-foreground" />
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-semibold text-foreground">{stats.vendors.assessments}</span> assessments
+                </p>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -86,6 +144,12 @@ export const DashboardStats = () => {
             <div className="space-y-1">
               <p className="text-sm font-medium text-muted-foreground">Active Items</p>
               <p className="text-3xl font-bold tracking-tight">{stats.items.total}</p>
+              <div className="flex items-center gap-2 mt-2">
+                <Activity className="h-4 w-4 text-muted-foreground" />
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-semibold text-foreground">{stats.items.assessments}</span> assessments
+                </p>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -131,16 +195,62 @@ export const DashboardStats = () => {
         </Card>
       </div>
 
-      {/* Live Commodity Trends */}
+      {/* Linked Indices */}
       <Card>
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold">Live Commodity Trends</h3>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <Link2 className="h-5 w-5" />
+                Linked Market Indices
+              </CardTitle>
+              <CardDescription>Real-time market data sources for commodity pricing</CardDescription>
+            </div>
             <Badge variant="outline" className="bg-success/10 text-success border-success/20">
+              {linkedIndices.length} Active
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {linkedIndices.map((index) => (
+              <div key={index.name} className="p-4 rounded-lg border bg-card hover:shadow-md transition-shadow">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <h4 className="font-semibold text-sm">{index.name}</h4>
+                    <Badge variant="outline" className="mt-2 bg-success/10 text-success border-success/20 text-xs">
+                      {index.status}
+                    </Badge>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {index.commodities.map((commodity) => (
+                    <Badge key={commodity} variant="secondary" className="text-xs">
+                      {commodity}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Live Commodity Prices */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Live Commodity Prices</CardTitle>
+              <CardDescription>Current spot prices with 24-hour changes</CardDescription>
+            </div>
+            <Badge variant="outline" className="bg-success/10 text-success border-success/20 animate-pulse">
               Live
             </Badge>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {commodityTrends.map((commodity) => (
               <div key={commodity.name} className="p-4 rounded-lg border bg-card hover:shadow-md transition-shadow">
                 <div className="flex items-start justify-between mb-2">
@@ -162,6 +272,145 @@ export const DashboardStats = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Live Commodity Trend Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Copper (Cu) - 30 Day Trend</CardTitle>
+            <CardDescription>LME Copper spot price per metric ton</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={200}>
+              <AreaChart data={copperTrendData}>
+                <defs>
+                  <linearGradient id="colorCopper" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(var(--chart-1))" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="hsl(var(--chart-1))" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                <XAxis dataKey="day" className="text-xs" />
+                <YAxis className="text-xs" domain={['dataMin - 50', 'dataMax + 50']} />
+                <Tooltip 
+                  formatter={(value: number) => `$${value}/MT`}
+                  contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="price" 
+                  stroke="hsl(var(--chart-1))" 
+                  fillOpacity={1}
+                  fill="url(#colorCopper)"
+                  strokeWidth={2}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Aluminum (Al) - 30 Day Trend</CardTitle>
+            <CardDescription>LME Aluminum spot price per metric ton</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={200}>
+              <AreaChart data={aluminumTrendData}>
+                <defs>
+                  <linearGradient id="colorAluminum" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(var(--chart-2))" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="hsl(var(--chart-2))" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                <XAxis dataKey="day" className="text-xs" />
+                <YAxis className="text-xs" domain={['dataMin - 20', 'dataMax + 20']} />
+                <Tooltip 
+                  formatter={(value: number) => `$${value}/MT`}
+                  contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="price" 
+                  stroke="hsl(var(--chart-2))" 
+                  fillOpacity={1}
+                  fill="url(#colorAluminum)"
+                  strokeWidth={2}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Zinc (Zn) - 30 Day Trend</CardTitle>
+            <CardDescription>LME Zinc spot price per metric ton</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={200}>
+              <AreaChart data={zincTrendData}>
+                <defs>
+                  <linearGradient id="colorZinc" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(var(--chart-3))" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="hsl(var(--chart-3))" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                <XAxis dataKey="day" className="text-xs" />
+                <YAxis className="text-xs" domain={['dataMin - 30', 'dataMax + 30']} />
+                <Tooltip 
+                  formatter={(value: number) => `$${value}/MT`}
+                  contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="price" 
+                  stroke="hsl(var(--chart-3))" 
+                  fillOpacity={1}
+                  fill="url(#colorZinc)"
+                  strokeWidth={2}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Steel - 30 Day Trend</CardTitle>
+            <CardDescription>SBB Hot-rolled coil price per metric ton</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={200}>
+              <AreaChart data={steelTrendData}>
+                <defs>
+                  <linearGradient id="colorSteel" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(var(--chart-4))" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="hsl(var(--chart-4))" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                <XAxis dataKey="day" className="text-xs" />
+                <YAxis className="text-xs" domain={['dataMin - 5', 'dataMax + 5']} />
+                <Tooltip 
+                  formatter={(value: number) => `$${value}/MT`}
+                  contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="price" 
+                  stroke="hsl(var(--chart-4))" 
+                  fillOpacity={1}
+                  fill="url(#colorSteel)"
+                  strokeWidth={2}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

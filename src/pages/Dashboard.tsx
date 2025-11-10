@@ -10,7 +10,7 @@ const Dashboard = () => {
       <Navigation />
       <div className="container mx-auto p-6 space-y-6">
         <div className="flex flex-col gap-2">
-          <h1 className="text-4xl font-bold tracking-tight">Procurement Dashboard</h1>
+          <h1 className="text-4xl font-bold tracking-tight">Costing Dashboard</h1>
           <p className="text-muted-foreground">Real-time cost intelligence and vendor management</p>
         </div>
 

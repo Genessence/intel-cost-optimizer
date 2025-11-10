@@ -30,9 +30,9 @@ export const Navigation = () => {
           <div className="flex items-center gap-8">
             <Link to="/" className="flex items-center gap-2">
               <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-lg">P</span>
+                <span className="text-primary-foreground font-bold text-lg">C</span>
               </div>
-              <span className="font-bold text-lg">ProcureCost</span>
+              <span className="font-bold text-lg">Costing Portal</span>
             </Link>
             <div className="flex gap-1">
               {navItems.map((item) => {

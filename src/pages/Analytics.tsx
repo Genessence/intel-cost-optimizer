@@ -46,7 +46,7 @@ const Analytics = () => {
       <div className="container mx-auto p-6 space-y-6">
         <div className="flex flex-col gap-2">
           <h1 className="text-4xl font-bold tracking-tight">Analytics & Insights</h1>
-          <p className="text-muted-foreground">Data-driven procurement intelligence and forecasting</p>
+          <p className="text-muted-foreground">Data-driven cost intelligence and forecasting</p>
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
@@ -62,7 +62,7 @@ const Analytics = () => {
               <Card>
                 <CardHeader>
                   <CardTitle>Cost Breakdown by Category</CardTitle>
-                  <CardDescription>Total annual procurement costs</CardDescription>
+                  <CardDescription>Total annual costs</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
@@ -220,7 +220,7 @@ const Analytics = () => {
                       <p className="text-2xl font-bold text-success">$87,300</p>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Consolidating steel procurement to 2 vendors (from 4) could unlock volume discounts of
+                      Consolidating steel sourcing to 2 vendors (from 4) could unlock volume discounts of
                       6-8%.
                     </p>
                   </div>
